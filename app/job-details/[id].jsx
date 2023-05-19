@@ -8,7 +8,14 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Company, JobTabs, ScreenHeaderBtn } from '../../components';
+import {
+  Company,
+  JobAbout,
+  JobFooter,
+  JobTabs,
+  ScreenHeaderBtn,
+  Specifics,
+} from '../../components';
 import { COLORS, icons, SIZES } from '../../constants';
 import { useFetch } from '../../hooks/useFetch';
 
@@ -26,6 +33,24 @@ const JobDetails = () => {
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const onRefresh = useCallback(() => {}, []);
 
+  const displayTabContent = () => {
+    const mapper = {
+      Qualifications: (
+        <Specifics
+          title="Qualifications"
+          points={data[0].job_highlights?.Qualifications ?? ['N/A']}
+        />
+      ),
+      About: <JobAbout info={data[0].job_description ?? 'No data provided'} />,
+      Responsabilities: (
+        <Specifics
+          title="Responsabilities"
+          points={data[0].job_highlights?.Responsabilities ?? ['N/A']}
+        />
+      ),
+    };
+    return mapper[activeTab] ?? null;
+  };
   return (
     <SafeAreaView>
       <Stack.Screen
@@ -48,6 +73,7 @@ const JobDetails = () => {
       />
       <>
         <ScrollView
+          style={{ backgroundColor: COLORS.lightWhite }}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -72,9 +98,16 @@ const JobDetails = () => {
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
               />
+              {displayTabContent()}
             </View>
           )}
         </ScrollView>
+        <JobFooter
+          url={
+            data[0]?.job_google_link ??
+            'https://careers.google.com/jobs/results'
+          }
+        />
       </>
     </SafeAreaView>
   );

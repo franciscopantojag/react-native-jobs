@@ -24,6 +24,7 @@ export const useFetch = (endpoint, params) => {
       const response = await axios.request(options);
       setData(response.data.data);
     } catch (err) {
+      console.log(err);
       setError(err);
     }
     setIsLoading(false);
